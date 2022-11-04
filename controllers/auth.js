@@ -64,7 +64,7 @@ const Login = async (req = request, res = response) => {
     if (!matches) {
       return res.status(403).json({
         ok: false,
-        msg: 'Contraseña incorrecto',
+        msg: 'Contraseña incorrecta',
       });
     }
 

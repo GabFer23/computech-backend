@@ -23,7 +23,7 @@ const checkAuth = async (req = request, res = response, next) => {
         msg: 'token no válido',
       });
     }
-
+     
     // ? OBTENER TOKEN ([Bearer] + [token])
     token = token.split(' ')[1];
 

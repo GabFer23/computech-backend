@@ -11,6 +11,7 @@ const app = express();
 // ? Database
 dbConnection();
 
+
 // ? Directrio público
 app.use(express.static('public'));
 
@@ -36,8 +37,8 @@ app.use(cors());
 // * ========================== RUTAS DE LA APLICACIÓN ==========================
 
 app.use('/api/auth', require('./routes/auth'));
-// app.use('/api/brands', require('./routes/brands'));
-// app.use('/api/computers', require('./routes/computers'));
+app.use('/api/brands', require('./routes/brands'));
+app.use('/api/computers', require('./routes/computers'));
 
 // ! =============================================================================================
 
