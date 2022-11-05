@@ -36,7 +36,7 @@ const getAllComputers = async (req = request, res = response) => {
       .limit(pageSize);
 
     // ? OBTENER LA CANTIDAD DE REGISTROS DE COMPUTADORES
-    const totalComputers = await Computer.find().countDocuments();
+    const totalComputers = await Computer.find(queryObject).countDocuments();
 
     // ? CALCULAR LA CANTIDAD DE PÁGINAS
     const totalPages = Math.ceil(totalComputers / pageSize);
