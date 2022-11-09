@@ -103,11 +103,20 @@ const getComputerById = async (req = request, res = response) => {
 const getAllComputersByUser = async (req = request, res = response) => {
   const { user } = req;
 
-  res.status(200).json({
-    ok: true,
-    msg: 'Obtenidos correctamente',
-    user: user._id,
-  });
+  try {
+    // ? BUSCAR COMPUTADORES QUE SON PROPIEDAD DEL USUARIO AUTENTICADO
+    const computers = await Computer.find({ owner: user._id });
+    res.status(200).json({
+      ok: true,
+      msg: 'Obtenidos correctamente',
+      computers,
+    });
+  } catch (error) {
+    res.status(500).json({
+      ok: false,
+      msg: error.message,
+    });
+  }
 };
 
 // ! =============================================================================================
@@ -156,17 +165,87 @@ const createComputer = async (req = request, res = response) => {
 // * ================= ACTUALIZAR COMPUTADOR =================
 
 const updateComputer = async (req = request, res = response) => {
-  res.status(200).json({
-    ok: true,
-    msg: 'Actualizado correctamente',
-    computer: req.body,
-  });
+  const { id: computerId } = req.params;
+  const { user } = req;
+  try {
+    // ? ====== VERIFICAR SI EL COMPUTADOR EXISTE ======
+    const computer = await Computer.findById(computerId);
+    if (!computer) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'Computador no encontrado',
+      });
+    }
+
+    // ? ====== VERIFICAR SI EL COMPUTADOR LE PERTENECE AL USUARIO AUTENTICADO ======
+    if (user._id.toString() !== computer.owner.toString()) {
+      return res.status(401).json({
+        ok: false,
+        msg: 'Acción no permitida',
+      });
+    }
+
+    // ? PREPARAR DATOS ENVIADOS Y AGREGAR EL ID DEL USUARIO
+    const editedComputer = {
+      ...req.body,
+      owner: computer.owner,
+    };
+
+    // ? ====== ACTUALIZAR COMPUTADOR ======
+    const updatedComputer = await Computer.findByIdAndUpdate(
+      computerId,
+      editedComputer,
+      { new: true }
+    );
+
+    res.status(200).json({
+      ok: true,
+      msg: 'Actualizado correctamente',
+      computer: updatedComputer,
+    });
+  } catch (error) {
+    res.status(500).json({
+      ok: false,
+      msg: error.message,
+    });
+  }
 };
 
 // ! =============================================================================================
 // * ================= ELIMINAR COMPUTADOR =================
 
 const deleteComputer = async (req = request, res = response) => {
+  const { user } = req;
+  const { id: computerId } = req.params;
+  try {
+    // ? ====== VERIFICAR SI EL COMPUTADOR EXISTE ======
+    const computer = await Computer.findById(computerId);
+    if (!computer) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'Computador no encontrado',
+      });
+    }
+
+    // ? ====== VERIFICAR SI EL COMPUTADOR LE PERTENECE AL USUARIO AUTENTICADO ======
+    if (user._id.toString() !== computer.owner.toString()) {
+      return res.status(401).json({
+        ok: false,
+        msg: 'Acción no permitida',
+      });
+    }
+
+    await computer.deleteOne();
+    res.status(200).json({
+      ok: true,
+      msg: 'deleted successfully',
+    });
+  } catch (error) {
+    res.status(500).json({
+      ok: false,
+      msg: error.message,
+    });
+  }
   res.status(200).json({
     ok: true,
     msg: 'eliminado correctamente',
