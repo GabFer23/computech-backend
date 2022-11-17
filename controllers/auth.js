@@ -1,7 +1,10 @@
 const { request, response } = require('express');
 const { User } = require('../models');
 const { generateJWT } = require('../helpers/generateJWT');
-const {passwordsMatches , encryptPassword } = require('../helpers/passwordHandler');
+const {
+  passwordsMatches,
+  encryptPassword,
+} = require('../helpers/passwordHandler');
 
 // ! =============================================================================================
 // * ========================== REGISTRO DE USUARIO ==========================

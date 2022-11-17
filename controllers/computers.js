@@ -168,6 +168,17 @@ const updateComputer = async (req = request, res = response) => {
   const { id: computerId } = req.params;
   const { user } = req;
   try {
+    // ? ====== VERIFICAR SI LA MARCA EXISTE ======
+    const { brand } = req.body;
+    const brandExists = await Brand.findById(brand);
+
+    if (!brandExists) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'Marca no encontrada',
+      });
+    }
+
     // ? ====== VERIFICAR SI EL COMPUTADOR EXISTE ======
     const computer = await Computer.findById(computerId);
     if (!computer) {
@@ -238,7 +249,7 @@ const deleteComputer = async (req = request, res = response) => {
     await computer.deleteOne();
     res.status(200).json({
       ok: true,
-      msg: 'deleted successfully',
+      msg: 'Eliminado correctamente',
     });
   } catch (error) {
     res.status(500).json({
@@ -246,10 +257,6 @@ const deleteComputer = async (req = request, res = response) => {
       msg: error.message,
     });
   }
-  res.status(200).json({
-    ok: true,
-    msg: 'eliminado correctamente',
-  });
 };
 
 // ! =============================================================================================
