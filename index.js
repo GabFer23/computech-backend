@@ -11,25 +11,11 @@ const app = express();
 // ? Database
 dbConnection();
 
-
 // ? Directrio público
 app.use(express.static('public'));
 
 // ? Lectura y parseo del body
 app.use(express.json());
-
-// ? CORS
-// const whitelist = [process.env.FRONTEND_URL];
-
-// const corsOptions = {
-//   origin: function (origin, callback) {
-//     if (whitelist.includes(origin)) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('CORS error'));
-//     }
-//   },
-// };
 
 app.use(cors());
 
